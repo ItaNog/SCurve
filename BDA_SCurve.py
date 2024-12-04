@@ -47,30 +47,21 @@ import streamlit as st
 # Block 02: Database Connection
 
 def get_connection():
-    os.environ['DB_USER'] = 'itamar.nogueira.ext@andritz.com'
-    os.environ['DB_NAME'] = 'db_powerbiprodemea_20220826_07423857_f46b'
+    db_user = st.secrets["DB_USER"]
+    db_password = st.secrets["DB_PASSWORD"]
+    db_name = st.secrets["DB_NAME"]
+    server = st.secrets["DB_SERVER"]
 
-    connection_string = (
-        "DRIVER={ODBC Driver 18 for SQL Server};"
-        "SERVER=r4uykz2x5bfung2lqbyxqqbggi-y2dfno4vff2ulemxmzhdvlybva.datamart.fabric.microsoft.com;"
-        f"DATABASE={os.getenv('DB_NAME')};"
-        "Authentication=ActiveDirectoryInteractive;"
-        f"UID={os.getenv('DB_USER')};"
-        "Encrypt=yes;"
-        "TrustServerCertificate=no;"
-        "Connection Timeout=30;"
-    )
-
-    connection_uri = f"mssql+pyodbc:///?odbc_connect={urllib.parse.quote_plus(connection_string)}"
+    connection_string = f"mssql+pymssql://{db_user}:{db_password}@{server}/{db_name}"
     try:
-        engine = create_engine(connection_uri)
+        engine = create_engine(connection_string)
         with engine.connect() as connection:
             print("Connection to the database was successful!")
         return engine
     except Exception as ex:
         print(f"Failed to connect to the database. Error: {str(ex)}")
         return None
-
+        
 #-------------------------------------------------------------------------------------------------- 
 
 # Block 03: Linear Distribution
