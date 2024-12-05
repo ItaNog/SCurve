@@ -6,3 +6,4 @@ sqlalchemy
 streamlit
 pyodbc
 pymssql
+pytds
