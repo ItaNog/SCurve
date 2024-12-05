@@ -48,33 +48,16 @@ import streamlit as st
 # Block 02: Database Connection
 
 def get_connection():
-    import urllib
-    from sqlalchemy import create_engine
-    import streamlit as st
+    db_user = st.secrets["DB_USER"]
+    db_password = st.secrets["DB_PASSWORD"]
+    db_name = st.secrets["DB_NAME"]
+    db_server = st.secrets["DB_SERVER"]
 
-    # Get secrets from Streamlit
-    DB_USER = st.secrets["DB_USER"]
-    DB_NAME = st.secrets["DB_NAME"]
-    DB_PASSWORD = st.secrets["DB_PASSWORD"]
-    DB_SERVER = st.secrets["DB_SERVER"]
-
-    # Build connection string
-    connection_string = (
-        f"DRIVER={{ODBC Driver 18 for SQL Server}};"
-        f"SERVER={DB_SERVER};"
-        f"DATABASE={DB_NAME};"
-        f"UID={DB_USER};"
-        f"PWD={DB_PASSWORD};"
-        "Encrypt=yes;"
-        "TrustServerCertificate=no;"
-        "Connection Timeout=30;"
-    )
-
-    connection_uri = f"mssql+pyodbc:///?odbc_connect={urllib.parse.quote_plus(connection_string)}"
+    connection_string = f"mssql+pymssql://{db_user}:{db_password}@{db_server}/{db_name}"
     try:
-        engine = create_engine(connection_uri)
+        engine = create_engine(connection_string)
         with engine.connect() as connection:
-            st.success("Connection to the database was successful!")
+            st.write("Connection to the database was successful!")
         return engine
     except Exception as ex:
         st.error(f"Failed to connect to the database. Error: {str(ex)}")
