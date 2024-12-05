@@ -53,7 +53,9 @@ def get_connection():
     db_name = st.secrets["DB_NAME"]
     db_server = st.secrets["DB_SERVER"]
 
-    connection_string = f"mssql+pymssql://{db_user}:{db_password}@{db_server}/{db_name}"
+    # If encryption is required
+    connection_string = f"mssql+pytds://{db_user}:{db_password}@{db_server}/{db_name}?ssl=True"
+
     try:
         engine = create_engine(connection_string)
         with engine.connect() as connection:
